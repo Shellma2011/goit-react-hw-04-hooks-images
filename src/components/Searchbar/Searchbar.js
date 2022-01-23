@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
@@ -79,47 +79,44 @@ const SearchFormInput = styled.input`
   }
 `;
 
-export default class Searchbar extends Component {
-  state = {
-    query: '',
+export default function Searchbar({ onSubmit }) {
+  const [query, setQuery] = useState('');
+
+  const handleQueryChange = e => {
+    setQuery(e.currentTarget.value);
   };
 
-  handleQueryChange = e => {
-    this.setState({ query: e.currentTarget.value });
-  };
-
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
-    if (this.state.query === '') {
+    if (query === '') {
       toast.error('Enter what you want to find');
       return;
     }
 
-    this.props.onSubmit(this.state.query);
-    this.setState({ query: '' });
+    onSubmit(query);
+    setQuery('');
   };
-  render() {
-    return (
-      <SearchbarSection>
-        <Toaster />
-        <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit">
-            <FaSearch />
-            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
-          </SearchFormButton>
-          <SearchFormInput
-            type="text"
-            name="query"
-            autocomplete="off"
-            placeholder="Search images and photos"
-            onChange={this.handleQueryChange}
-            value={this.state.query}
-          />
-        </SearchForm>
-      </SearchbarSection>
-    );
-  }
+
+  return (
+    <SearchbarSection>
+      <Toaster />
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormButton type="submit">
+          <FaSearch />
+          <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+        </SearchFormButton>
+        <SearchFormInput
+          type="text"
+          name="query"
+          autocomplete="off"
+          placeholder="Search images and photos"
+          onChange={handleQueryChange}
+          value={query}
+        />
+      </SearchForm>
+    </SearchbarSection>
+  );
 }
 
 Searchbar.propTypes = { onSubmit: PropTypes.func };
