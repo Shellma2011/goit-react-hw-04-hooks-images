@@ -64,13 +64,15 @@ export default function App() {
 
   useEffect(() => {
     if (serchTerm === '') {
-      setStatus('pending');
+      return;
     }
 
-    const fetchImages = async () => {
+    setStatus('pending');
+
+    const fetchImages = () => {
       setPage(1);
-      await getImages(serchTerm, 1).then(data => {
-        if (data.total < 1) {
+      getImages(serchTerm, 1).then(data => {
+        if (data.total === 0) {
           setStatus('rejected');
           return;
         }
@@ -78,6 +80,8 @@ export default function App() {
         setImages(data.hits);
         setPage(prevState => prevState + 1);
         setStatus('resolved');
+        // console.log(data.total);
+        // console.log(data.totalHits);
       });
     };
     fetchImages();
@@ -101,6 +105,7 @@ export default function App() {
   }
 
   if (status === 'resolved') {
+    console.log(data);
     return (
       <AppWrapper>
         <Searchbar onSubmit={setChangeSerchTerm} />
