@@ -49,6 +49,10 @@ export default function App() {
     getImages(serchTerm, page).then(data => {
       setImages(prevState => [...prevState, ...data.hits]);
       setPage(prevState => prevState + 1);
+      if (data.hits.length < 12) {
+        setData(false);
+      }
+      // console.log(data.hits.length);
     });
     handleScroll();
   };
@@ -76,12 +80,10 @@ export default function App() {
           setStatus('rejected');
           return;
         }
-        setData(data.totalHits);
+        setData(data.total);
         setImages(data.hits);
         setPage(prevState => prevState + 1);
         setStatus('resolved');
-        // console.log(data.total);
-        // console.log(data.totalHits);
       });
     };
     fetchImages();
@@ -105,7 +107,6 @@ export default function App() {
   }
 
   if (status === 'resolved') {
-    console.log(data);
     return (
       <AppWrapper>
         <Searchbar onSubmit={setChangeSerchTerm} />
